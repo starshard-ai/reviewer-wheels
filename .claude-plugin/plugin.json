@@ -1,0 +1,19 @@
+{
+  "name": "reviewer-wheels",
+  "description": "Four verification wheels for multi-agent AI coding: drift-checks, adversarial review, a reuse compiler, and a frontend smoke gate — for the moment when both agents say \"done\" and nobody verified.",
+  "version": "0.1.0",
+  "author": {
+    "name": "starshard-ai"
+  },
+  "homepage": "https://github.com/starshard-ai/reviewer-wheels",
+  "repository": "https://github.com/starshard-ai/reviewer-wheels",
+  "license": "MIT",
+  "keywords": [
+    "code-review",
+    "multi-agent",
+    "verification",
+    "adversarial-review",
+    "smoke-test",
+    "quality-gate"
+  ]
+}

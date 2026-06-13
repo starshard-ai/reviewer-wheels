@@ -1,0 +1,18 @@
+{
+  "name": "reviewer-wheels",
+  "owner": {
+    "name": "starshard-ai"
+  },
+  "description": "Verification wheels for multi-agent AI coding.",
+  "plugins": [
+    {
+      "name": "reviewer-wheels",
+      "source": "./",
+      "description": "Four verification wheels: drift-checks (mirror-pair), adversarial review, a reuse compiler, and a frontend smoke gate.",
+      "version": "0.1.0",
+      "license": "MIT",
+      "keywords": ["code-review", "multi-agent", "verification"],
+      "category": "development"
+    }
+  ]
+}
