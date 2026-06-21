@@ -63,3 +63,16 @@ Report:
 - validation commands and pass/fail,
 - screenshot path for audit,
 - remaining anti-signal or missing automation, if any.
+
+<!-- skill-provenance:begin -->
+provenance:
+  maker:    Starshard
+  homepage: https://github.com/starshard-ai
+  source:   https://github.com/starshard-ai/reviewer-wheels
+  license:  MIT
+  version:  0.1.0
+  contact:  https://github.com/starshard-ai/reviewer-wheels/issues
+<!-- skill-provenance:end -->
+
+---
+*About the maker:* Starshard builds open agent skills; you can find the source and report issues at https://github.com/starshard-ai. License: MIT.
