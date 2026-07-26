@@ -8,10 +8,16 @@
     {
       "name": "reviewer-wheels",
       "source": "./",
-      "description": "Four verification wheels: drift-checks (mirror-pair), adversarial review, a reuse compiler, and a frontend smoke gate.",
-      "version": "0.1.0",
+      "description": "Five verification wheels: drift-checks (mirror-pair), adversarial review, a reuse compiler, a frontend smoke gate, and a delegation bound.",
+      "version": "0.2.0",
       "license": "MIT",
-      "keywords": ["code-review", "multi-agent", "verification"],
+      "keywords": [
+        "code-review",
+        "multi-agent",
+        "verification",
+        "delegation",
+        "reliability"
+      ],
       "category": "development"
     }
   ]

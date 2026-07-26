@@ -1,13 +1,14 @@
 # reviewer-wheels
 
 In multi-agent coding, the dangerous moment is when BOTH agents say "done" and
-nobody verified — these four wheels are the verifier.
+nobody verified — these five wheels are the verifier.
 
 When you run more than one AI agent on a codebase, the failure is rarely a loud
 crash. It's two agents that each report success, a green checkmark on both
 sides, and a bug that ships anyway because no one held a clean-context view of
-the change. These four skills add the missing checks: a drift mirror, an
-adversarial review panel, a reuse compiler, and a frontend smoke gate.
+the change. Or quieter still: one agent simply stops, and nobody notices for
+hours. These five skills add the missing checks: a drift mirror, an adversarial
+review panel, a reuse compiler, a frontend smoke gate, and a delegation bound.
 
 ## Install
 
@@ -22,7 +23,7 @@ Or install directly from the repo:
 /plugin install reviewer-wheels --from github:starshard-ai/reviewer-wheels
 ```
 
-## The four wheels
+## The five wheels
 
 - **mirror-pair** — A bounded k=1 observer/executor loop. One agent executes;
   one clean-context mirror reviews a compact state packet for drift, broken
@@ -50,6 +51,15 @@ Or install directly from the repo:
   produces a screenshot the agent inspects itself before reporting success —
   catching stale data, overlapping panels, clipped text, and missing receipts.
   Includes a staged release guard for anything publicly live.
+
+- **delegation-bound-gate** — For the failure where nothing crashes: a subagent
+  hangs, the parent waits, and hours disappear with no error anywhere. Requires
+  every delegation to carry a hard cap plus a partial-report contract, and gives
+  the measured procedure for judging a silent worker (check open sockets and
+  probe the target — a hung tool call shows zero connections) instead of guessing
+  from file mtime, blocking on a non-critical path, or hedging with a second
+  agent. Ships an opt-in `PreToolUse` hook, because the rule it enforces had
+  already been written down in plain text and broken four times.
 
 ## Demo
 

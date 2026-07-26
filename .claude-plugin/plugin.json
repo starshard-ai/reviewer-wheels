@@ -1,7 +1,7 @@
 {
   "name": "reviewer-wheels",
-  "description": "Four verification wheels for multi-agent AI coding: drift-checks, adversarial review, a reuse compiler, and a frontend smoke gate — for the moment when both agents say \"done\" and nobody verified.",
-  "version": "0.1.0",
+  "description": "Five verification wheels for multi-agent AI coding: drift-checks, adversarial review, a reuse compiler, a frontend smoke gate, and a delegation bound — for when both agents say \"done\" and nobody verified, or when one agent quietly stops and nobody notices.",
+  "version": "0.2.0",
   "author": {
     "name": "starshard-ai"
   },
@@ -14,6 +14,10 @@
     "verification",
     "adversarial-review",
     "smoke-test",
-    "quality-gate"
+    "quality-gate",
+    "delegation",
+    "subagent",
+    "timeout",
+    "reliability"
   ]
 }
