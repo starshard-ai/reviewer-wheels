@@ -3,20 +3,24 @@
   "owner": {
     "name": "starshard-ai"
   },
-  "description": "Verification wheels for multi-agent AI coding.",
+  "description": "Six verification wheels for multi-agent AI coding.",
   "plugins": [
     {
       "name": "reviewer-wheels",
       "source": "./",
-      "description": "Five verification wheels: drift-checks (mirror-pair), adversarial review, a reuse compiler, a frontend smoke gate, and a delegation bound.",
-      "version": "0.2.0",
+      "description": "Six verification wheels: drift-checks, adversarial review, a reuse compiler, a frontend smoke gate, a delegation bound, and viral-repo triage.",
+      "version": "0.3.0",
       "license": "MIT",
       "keywords": [
         "code-review",
         "multi-agent",
         "verification",
         "delegation",
-        "reliability"
+        "reliability",
+        "triage",
+        "maintainer",
+        "github-actions",
+        "open-source"
       ],
       "category": "development"
     }

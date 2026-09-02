@@ -1,0 +1,256 @@
+name: Governance Triage
+
+on:
+  issues:
+    types: [opened, reopened]
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited]
+  issue_comment:
+    types: [created]
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: gov-triage-${{ github.event.issue.number || github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  label-new-issue:
+    if: ${{ github.event_name == 'issues' }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Label new issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const labels = ["status/needs-triage"];
+            const text = `${issue.title || ""}\n${issue.body || ""}`;
+            const security = /(security|vulnerab|CVE|secret|token leak|credential)/i.test(text);
+            if (security) labels.push("kind/security");
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              labels,
+            });
+            if (security) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: "Thanks — if this involves a vulnerability, please use the private report form at `https://github.com/" + context.repo.owner + "/" + context.repo.repo + "/security/advisories/new`. Please don't post exploit details here. A maintainer will acknowledge within 24h.",
+              });
+            }
+
+  label-pr:
+    if: ${{ github.event_name == 'pull_request_target' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Label paths
+        uses: actions/labeler@v5
+        with:
+          sync-labels: false
+      - name: Label size and triage state
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const total = pr.additions + pr.deletions;
+            const size =
+              total < 10 ? "size/XS" :
+              total < 50 ? "size/S" :
+              total < 200 ? "size/M" :
+              total < 500 ? "size/L" : "size/XL";
+            const existing = pr.labels.map((label) => label.name);
+            for (const label of existing.filter((name) => name.startsWith("size/") && name !== size)) {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                name: label,
+              }).catch((error) => {
+                if (error.status !== 404) throw error;
+              });
+            }
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              labels: context.payload.action === "opened" ? [size, "status/needs-triage"] : [size],
+            });
+
+  duplicate-fix-check:
+    if: ${{ github.event_name == 'pull_request_target' && (github.event.action == 'opened' || github.event.action == 'edited') }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      issues: write
+    steps:
+      - name: Check duplicate issue references
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const marker = "<!-- gov:dup-check -->";
+            const refRe = /\b(close[sd]?|fix(e[sd])?|resolve[sd]?)\s*:?\s*#(\d+)/ig;
+            const issueNumbers = [...new Set([...(`${pr.body || ""}`).matchAll(refRe)].map((m) => Number(m[3])))];
+            const duplicates = [];
+            for (const issueNumber of issueNumbers) {
+              const query = `repo:${context.repo.owner}/${context.repo.repo} is:pr is:open "#${issueNumber}"`;
+              const results = await github.rest.search.issuesAndPullRequests({ q: query, per_page: 20 });
+              for (const item of results.data.items) {
+                if (item.number === pr.number) continue;
+                const other = await github.rest.pulls.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: item.number,
+                });
+                const body = other.data.body || "";
+                if (new RegExp(`\\b(close[sd]?|fix(e[sd])?|resolve[sd]?)\\s*:?\\s*#${issueNumber}\\b`, "i").test(body)) {
+                  duplicates.push({ issueNumber, number: other.data.number, title: other.data.title, url: other.data.html_url });
+                }
+              }
+            }
+            if (duplicates.length === 0) return;
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              labels: ["status/duplicate-candidate"],
+            });
+            const lines = duplicates.map((dup) => `- #${dup.number}: ${dup.title} (${dup.url}) references #${dup.issueNumber}`);
+            const body = `${marker}\nDuplicate-fix candidate detected.\n\n${lines.join("\n")}\n\nArbitration rule: prefer the earlier PR unless the later one is strictly more complete with tests and docs. Consider reviewing or co-authoring the preferred PR. This workflow never closes PRs.`;
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              per_page: 100,
+            });
+            const prior = comments.data.find((comment) => comment.body && comment.body.includes(marker));
+            if (prior) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: prior.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body,
+              });
+            }
+
+  claim-handler:
+    if: ${{ github.event_name == 'issue_comment' && github.event.issue.pull_request == null }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Handle claim
+        uses: actions/github-script@v7
+        with:
+          script: |
+            if ((context.payload.comment.body || "").trim() !== "/claim") return;
+            const issue = context.payload.issue;
+            const labels = issue.labels.map((label) => label.name);
+            if (labels.includes("status/claimed")) {
+              const comments = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                per_page: 100,
+              });
+              const claim = [...comments.data].reverse().find((comment) => (comment.body || "").startsWith("Claimed by @"));
+              const claimedBy = claim ? claim.body.match(/Claimed by @([^\s]+)/)?.[1] : "another contributor";
+              const claimedAt = claim ? claim.created_at : "an earlier time";
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `Already claimed by @${claimedBy} at ${claimedAt}; ask them or wait 72h.`,
+              });
+              return;
+            }
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              labels: ["status/claimed"],
+            });
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `Claimed by @${context.payload.comment.user.login} — please open a PR referencing #${issue.number} within 72h or the claim expires.`,
+            });
+
+  claim-expiry:
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: read
+    steps:
+      - name: Expire abandoned claims
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const cutoff = Date.now() - 72 * 60 * 60 * 1000;
+            const claimed = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: "status/claimed",
+              per_page: 100,
+            });
+            for (const issue of claimed.filter((item) => !item.pull_request)) {
+              const comments = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                per_page: 100,
+              });
+              const claim = [...comments.data].reverse().find((comment) => (comment.body || "").startsWith("Claimed by @"));
+              if (!claim || Date.parse(claim.created_at) > cutoff) continue;
+              const query = `repo:${context.repo.owner}/${context.repo.repo} is:pr is:open "#${issue.number}"`;
+              const results = await github.rest.search.issuesAndPullRequests({ q: query, per_page: 20 });
+              let linked = false;
+              for (const item of results.data.items) {
+                const pr = await github.rest.pulls.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: item.number,
+                });
+                if (new RegExp(`\\b(close[sd]?|fix(e[sd])?|resolve[sd]?)\\s*:?\\s*#${issue.number}\\b`, "i").test(pr.data.body || "")) {
+                  linked = true;
+                  break;
+                }
+              }
+              if (linked) continue;
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                name: "status/claimed",
+              }).catch((error) => {
+                if (error.status !== 404) throw error;
+              });
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: "The 72h claim window expired without a linked PR. This issue is free to claim again.",
+              });
+            }

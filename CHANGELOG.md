@@ -4,6 +4,16 @@ All notable changes to this project are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] - 2026-09-02
+
+### Added
+- `viral-repo-triage` skill — triage protocol for the failure mode where a repo
+  goes from quiet to thousands of stars in days with one human CODEOWNER, zero
+  labels, and duplicate PRs competing for the same fix.
+- GitHub governance kit — drop-in labels, path labelling, size labelling,
+  duplicate-fix detection, claim expiry, stale handling, security routing,
+  maintainer policy docs, and gated comment-only AI workflows.
+
 ## [0.2.0] - 2026-07-26
 
 ### Added

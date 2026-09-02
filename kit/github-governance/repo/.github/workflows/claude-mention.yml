@@ -1,0 +1,54 @@
+name: Claude Mention
+
+# Maintainer on-demand assistant. Examples:
+#   @claude summarise the disagreement in this thread
+#   @claude does this PR duplicate #N?
+#   @claude which open PRs touch the same files as this one?
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  issues:
+    types: [opened, assigned]
+  pull_request_review:
+    types: [submitted]
+
+# Comment-only by design: contents stays read-only so the assistant answers in
+# threads but cannot push branches. Raise to `contents: write` only if you want
+# it to open fix PRs. `actions: read` lets it read CI results on PRs.
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  id-token: write
+  actions: read
+
+jobs:
+  claude-mention:
+    if: >-
+      ${{
+        vars.CLAUDE_MENTION_ENABLED == 'true' &&
+        (
+          (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+          (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+          (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
+          (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+        )
+      }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout base
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+      - name: Respond to mention
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Deliberately NO allowed_non_write_users here: only accounts with
+          # write access (maintainers / triagers) can summon the assistant, so
+          # drive-by commenters cannot spend the API budget or steer it.
+          github_token: ${{ secrets.GITHUB_TOKEN }}

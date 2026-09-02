@@ -1,0 +1,13 @@
+# Proposed CODEOWNERS
+#
+# A single-owner CODEOWNERS file makes one human the review bottleneck. Replace
+# these placeholder teams with your actual organization and area owners.
+#
+# GitHub only enforces CODEOWNERS when branch protection requires code-owner
+# review.
+
+* @ORG/core-maintainers
+docs/ @ORG/docs
+community/ @ORG/community-integrations
+plugins/ @ORG/community-integrations
+integrations/ @ORG/community-integrations

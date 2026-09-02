@@ -1,14 +1,15 @@
 # reviewer-wheels
 
 In multi-agent coding, the dangerous moment is when BOTH agents say "done" and
-nobody verified — these five wheels are the verifier.
+nobody verified — these six wheels are the verifier.
 
 When you run more than one AI agent on a codebase, the failure is rarely a loud
 crash. It's two agents that each report success, a green checkmark on both
 sides, and a bug that ships anyway because no one held a clean-context view of
 the change. Or quieter still: one agent simply stops, and nobody notices for
-hours. These five skills add the missing checks: a drift mirror, an adversarial
-review panel, a reuse compiler, a frontend smoke gate, and a delegation bound.
+hours. These six skills add the missing checks: a drift mirror, an adversarial
+review panel, a reuse compiler, a frontend smoke gate, a delegation bound, and a
+viral-repo triage protocol.
 
 ## Install
 
@@ -23,7 +24,7 @@ Or install directly from the repo:
 /plugin install reviewer-wheels --from github:starshard-ai/reviewer-wheels
 ```
 
-## The five wheels
+## The six wheels
 
 - **mirror-pair** — A bounded k=1 observer/executor loop. One agent executes;
   one clean-context mirror reviews a compact state packet for drift, broken
@@ -60,6 +61,14 @@ Or install directly from the repo:
   from file mtime, blocking on a non-critical path, or hedging with a second
   agent. Ships an opt-in `PreToolUse` hook, because the rule it enforces had
   already been written down in plain text and broken four times.
+
+- **viral-repo-triage** — For the failure where one human CODEOWNER is buried
+  under a flood of fork PRs, no labels exist, and duplicate fixes race each
+  other until either duplicates ship or nothing ships. This wheel turns triage
+  into a state machine where agents do everything upstream of the merge or close
+  decision: label, de-duplicate, route security, arbitrate claims, first-pass
+  review, and digest. It also ships a drop-in GitHub governance kit that a
+  maintainer can apply to their own repo with their own credentials.
 
 ## Demo
 

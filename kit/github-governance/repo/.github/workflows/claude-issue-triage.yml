@@ -1,0 +1,45 @@
+name: Claude Issue Triage
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+  issues: write
+  id-token: write
+
+jobs:
+  claude-issue-triage:
+    if: ${{ vars.CLAUDE_TRIAGE_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout base
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+      - name: Triage issue
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          allowed_non_write_users: "*"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: |
+            Repository: ${{ github.repository }}
+            Issue: #${{ github.event.issue.number }}
+
+            You are a comment-only repository triager. Use mcp__github__get_issue to read the issue first.
+
+            Classify the new issue into exactly one kind/* label and at most one area/* label. Search for duplicates by matching the same bug, request, or root problem.
+
+            If it is a duplicate, comment linking the original and add status/duplicate. Do not close.
+
+            If it is kind/security, post ONLY this redirect and nothing else: Thanks — if this involves a vulnerability, please use the private report form at `https://github.com/${{ github.repository }}/security/advisories/new`. Please don't post exploit details here. A maintainer will acknowledge within 24h.
+
+            If reproducible information is missing, add status/needs-info and comment with a short list of the missing details.
+
+            Otherwise leave status/needs-triage in place and add one sentence summarizing the issue for the maintainer.
+          claude_args: |
+            --allowedTools "mcp__github__get_issue,mcp__github__search_issues,mcp__github__list_issues,mcp__github__create_issue_comment,mcp__github__update_issue,mcp__github__get_issue_comments"
+            --max-turns 15

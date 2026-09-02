@@ -1,0 +1,60 @@
+area/core:
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/**
+          - lib/**
+          - "**/core/**"
+area/plugins:
+  - changed-files:
+      - any-glob-to-any-file:
+          - plugins/**
+          - "**/plugins/**"
+area/integrations:
+  - changed-files:
+      - any-glob-to-any-file:
+          - integrations/**
+          - "**/providers/**"
+          - "**/model_providers/**"
+          - "**/runtimes/**"
+area/cli:
+  - changed-files:
+      - any-glob-to-any-file:
+          - cli/**
+          - "**/cli/**"
+          - bin/**
+area/infra:
+  - changed-files:
+      - any-glob-to-any-file:
+          - infra/**
+          - services/**
+          - deploy/**
+          - Dockerfile*
+          - docker-compose*
+          - "*-install.sh"
+          - "*-uninstall.sh"
+area/docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - docs/**
+          - mkdocs.yml
+          - "**/*.md"
+area/tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - tests/**
+          - test/**
+          - "**/*_test.*"
+          - "**/test_*.*"
+area/examples:
+  - changed-files:
+      - any-glob-to-any-file:
+          - examples/**
+area/ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**
+area/legal:
+  - changed-files:
+      - any-glob-to-any-file:
+          - LICENSE*
+          - docs/legal/**

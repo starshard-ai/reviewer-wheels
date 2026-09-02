@@ -1,0 +1,184 @@
+-
+  name: status/needs-triage
+  color: D4C5F9
+  description: "[gov] Awaiting first-pass maintainer or triager classification."
+-
+  name: status/needs-info
+  color: FEF2C0
+  description: "[gov] Waiting on reporter or author for required details."
+-
+  name: status/accepted
+  color: C2E0C6
+  description: "[gov] Accepted as in scope and eligible for work."
+-
+  name: status/duplicate
+  color: EDEDED
+  description: "[gov] Duplicates another issue or pull request."
+-
+  name: status/wontfix
+  color: FFFFFF
+  description: "[gov] Rejected with a stated reason."
+-
+  name: status/claimed
+  color: BFDADC
+  description: "[gov] First-wins claim is active and expires after 72 hours without a linked pull request."
+-
+  name: status/needs-changes
+  color: F9D0C4
+  description: "[gov] Pull request needs concrete changes before maintainer review."
+-
+  name: status/ready-for-maintainer
+  color: 0E8A16
+  description: "[gov] Ready for human merge or close decision."
+-
+  name: status/superseded
+  color: C5DEF5
+  description: "[gov] Another open pull request is preferred for the same fix."
+-
+  name: status/needs-policy
+  color: FAD8C7
+  description: "[gov] Needs maintainer policy decision before implementation review."
+-
+  name: status/duplicate-candidate
+  color: FBCA04
+  description: "[gov] May overlap another open pull request and needs arbitration."
+-
+  name: status/stale
+  color: EDEDED
+  description: "[gov] Needs-info thread is past the stale threshold."
+-
+  name: kind/bug
+  color: D73A4A
+  description: "[gov] Something is broken."
+-
+  name: kind/feature
+  color: A2EEEF
+  description: "[gov] New behavior or capability request."
+-
+  name: kind/docs
+  color: 0075CA
+  description: "[gov] Documentation, examples, or explanatory text."
+-
+  name: kind/question
+  color: D876E3
+  description: "[gov] Usage question or clarification."
+-
+  name: kind/security
+  color: B60205
+  description: "[gov] Possible vulnerability or secret exposure; route privately."
+-
+  name: kind/community
+  color: 5319E7
+  description: "[gov] Community-owned integration, plugin, or extension."
+-
+  name: kind/refactor
+  color: C5DEF5
+  description: "[gov] Internal cleanup without intended behavior change."
+-
+  name: kind/ci
+  color: 1D76DB
+  description: "[gov] Continuous integration or workflow behavior."
+-
+  name: kind/dependency
+  color: 0366D6
+  description: "[gov] Dependency, package, or lockfile maintenance."
+-
+  name: kind/performance
+  color: F9D0C4
+  description: "[gov] Performance, memory, latency, or throughput work."
+-
+  name: prio/p0
+  color: B60205
+  description: "[gov] Highest priority; immediate maintainer attention."
+-
+  name: prio/p1
+  color: D93F0B
+  description: "[gov] High priority; schedule soon."
+-
+  name: prio/p2
+  color: FBCA04
+  description: "[gov] Normal priority."
+-
+  name: prio/p3
+  color: C2E0C6
+  description: "[gov] Lower priority or backlog candidate."
+-
+  name: size/XS
+  color: C2E0C6
+  description: "[gov] Pull request changes fewer than 10 lines."
+-
+  name: size/S
+  color: 7BC96F
+  description: "[gov] Pull request changes fewer than 50 lines."
+-
+  name: size/M
+  color: FBCA04
+  description: "[gov] Pull request changes fewer than 200 lines."
+-
+  name: size/L
+  color: F66A0A
+  description: "[gov] Pull request changes fewer than 500 lines."
+-
+  name: size/XL
+  color: D73A4A
+  description: "[gov] Pull request changes at least 500 lines."
+-
+  name: area/core
+  color: 0052CC
+  description: "[gov] Core library or runtime behavior."
+-
+  name: area/plugins
+  color: 5319E7
+  description: "[gov] Plugin system or plugin implementations."
+-
+  name: area/integrations
+  color: 7057FF
+  description: "[gov] External integration, provider, runtime, or connector."
+-
+  name: area/cli
+  color: 1D76DB
+  description: "[gov] Command-line interface or executable scripts."
+-
+  name: area/infra
+  color: 006B75
+  description: "[gov] Deployment, service, container, or operations files."
+-
+  name: area/docs
+  color: 0075CA
+  description: "[gov] Documentation paths."
+-
+  name: area/tests
+  color: 0E8A16
+  description: "[gov] Test code, fixtures, or test infrastructure."
+-
+  name: area/examples
+  color: C5DEF5
+  description: "[gov] Examples, samples, or tutorial assets."
+-
+  name: area/ci
+  color: 1D76DB
+  description: "[gov] Repository automation and workflow files."
+-
+  name: area/legal
+  color: FFFFFF
+  description: "[gov] License, legal, or policy material."
+-
+  name: area/api
+  color: BFD4F2
+  description: "[gov] Public API surface or protocol contract."
+-
+  name: area/ui
+  color: F9D0C4
+  description: "[gov] User interface, presentation, or interaction path."
+-
+  name: area/build
+  color: E99695
+  description: "[gov] Build system, packaging, or release machinery."
+-
+  name: good-first-issue
+  color: 7057FF
+  description: "[gov] Small scoped issue suitable for a new contributor."
+-
+  name: help-wanted
+  color: 008672
+  description: "[gov] Maintainers welcome external help on this issue."
